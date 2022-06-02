@@ -1,0 +1,20 @@
+{
+  "name": "node-red-contrib-edgeos",
+  "version": "1.0.1",
+  "description": "Provides a feed of leases created",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": [ "node-red" ],
+  "node-red": {
+    "nodes": {
+      "edgeos": "edgeos.js"
+    }
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "ws": "^8.1.0"
+  }
+}

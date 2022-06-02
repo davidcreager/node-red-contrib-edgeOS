@@ -1,0 +1,35 @@
+<script type="text/html" data-template-name="edgeos">
+    <div class="form-row">
+        <label for="node-input-command"><i class="fa fa-wrench"></i><span> Command:</span></label>
+        <select type="text" id="node-input-command" style="width: 70%">
+            <option value="leases">leases</option>
+            <option value="stats">stats</option>
+			<option value="arp">arp</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i><span> Name:</span></label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="edgeos">
+    <p>Provides a stream of dhcp leases from edgeOS</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('edgeos',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+			command: {value:"leases",required:true}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "file.png",
+        label: function() {
+            return this.name||"edgeos";
+        }
+    });
+</script>
