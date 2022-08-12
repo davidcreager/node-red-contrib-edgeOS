@@ -10,10 +10,14 @@ module.exports = function(RED) {
 			if (removed) {			
 				if (serv) {
 					console.log("[edgeOSNode] Closing EdgeOSServer")
-					serv.close().then( () => {
-						console.log("[edgeOSNode] EdgeOSServer closed");
-						done();
-					})
+					serv.close()
+						.then( () => {
+							console.log("[edgeOSNode] EdgeOSServer closed");
+							done();
+						})
+						.catch( er => {
+							node.error("[" + node.name + "][serv.close Error Caught]" + er);
+						} );
 				} else {
 					console.log("[edgeOSNode] EdgeOSServer does not exist so no need to close")
 					done();
@@ -28,10 +32,14 @@ module.exports = function(RED) {
 		const EdgeOSServer = require("./edgeOSServer.js");
 		this.serv = new EdgeOSServer({username:'david', password:'Polgara2',refreshPeriod:30});
 		var timer;
-		this.serv.init().then(() => {
-			console.log("[edgeOSNode] PID is " + node.serv.pid + " this pid is " + process.pid);
-			timer = setInterval( () => { node.serv.refreshHostNames()} , node.serv.refreshPeriod * 1000 );
-		});
+		this.serv.init()
+			.then(() => {
+				console.log("[edgeOSNode] PID is " + node.serv.pid + " this pid is " + process.pid);
+				timer = setInterval( () => { node.serv.refreshHostNames()} , node.serv.refreshPeriod * 1000 );
+				})
+			.catch( er => {
+				node.error("[" + node.name + "][init Error Caught]" + er);
+			} );
 		this.serv.on("devices", (data) => {
 			//node.warn("Received ",data);
 			node.send({topic: "edgeOS ", payload: data});
