@@ -152,8 +152,9 @@ class EdgeOSServer extends EventEmitter {
 	}
 	async logon(baseUrl, username, password) {
 		const form = { username: username, password: password };
+		let response;
 		try {
-			const response = await axios.post(baseUrl, qs.stringify(form), {
+			response = await axios.post(baseUrl, qs.stringify(form), {
 				maxRedirects: 0,
 				validateStatus: () => true // accept all certs
 			});
