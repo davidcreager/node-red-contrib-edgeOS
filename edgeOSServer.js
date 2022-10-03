@@ -35,10 +35,13 @@ async function handleMessage(messageContent) {
 }
 async function logon(baseUrl, username, password) {
     const form = { username: username, password: password };
-    const response = await axios.post(baseUrl, qs.stringify(form), {
-        maxRedirects: 0,
-        validateStatus: () => true // accept all certs
-    });
+	let response;
+	try {
+		response = await axios.post(baseUrl, qs.stringify(form), {
+			maxRedirects: 0,
+			validateStatus: () => true // accept all certs
+		});
+	} catch (er) {console.log("Caught error in logon " + er);throw new Error("Login failed " + er)}
 
     if (!response.headers['set-cookie']){
         throw new Error('Logon failed, please check username/password')
@@ -149,10 +152,12 @@ class EdgeOSServer extends EventEmitter {
 	}
 	async logon(baseUrl, username, password) {
 		const form = { username: username, password: password };
-		const response = await axios.post(baseUrl, qs.stringify(form), {
-			maxRedirects: 0,
-			validateStatus: () => true // accept all certs
-		});
+		try {
+			const response = await axios.post(baseUrl, qs.stringify(form), {
+				maxRedirects: 0,
+				validateStatus: () => true // accept all certs
+			});
+		} catch (er) {console.log("Caught error in logon " + er);throw new Error("Login failed " + er)}
 
 		if (!response.headers['set-cookie']){
 			throw new Error('Logon failed, please check username/password')
@@ -168,9 +173,12 @@ class EdgeOSServer extends EventEmitter {
 	async refreshHostNames(startup) {
 		let now = new Date(Date.now());
 		//console.log("[EdgeOSServer] [info] " + "PID is " + this.pid + " Refreshing at " + now.toLocaleDateString() + " " + now.toLocaleTimeString());
-		const response = await axios.get(baseUrl.replace(/\/$/, '') + "/api/edge/data.json?data=dhcp_leases", {
-			headers: { "Cookie": `beaker.session.id=${this.sessionCookie}` }
-		});
+		let response;
+		try {
+			response = await axios.get(baseUrl.replace(/\/$/, '') + "/api/edge/data.json?data=dhcp_leases", {
+				headers: { "Cookie": `beaker.session.id=${this.sessionCookie}` }
+			});
+		} catch (er) {console.log("Caught error in logon " + er);throw new Error("refreshHostNames failed " + er)}
 		for (const pool in response.data.output['dhcp-server-leases']) {
 			const leases = response.data.output['dhcp-server-leases'][pool]; //DHC
 			for (const ip in leases) {
