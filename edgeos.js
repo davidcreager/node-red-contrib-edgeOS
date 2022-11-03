@@ -35,7 +35,11 @@ module.exports = function(RED) {
 		this.serv.init()
 			.then(() => {
 				console.log("[edgeOSNode] PID is " + node.serv.pid + " this pid is " + process.pid);
-				timer = setInterval( () => { node.serv.refreshHostNames()} , node.serv.refreshPeriod * 1000 );
+				timer = setInterval( () => {
+					try {
+						node.serv.refreshHostNames()
+					} catch (er) {node.error("[" + node.name + "][init Error Caught]" + er)}
+				} , node.serv.refreshPeriod * 1000 );
 				})
 			.catch( er => {
 				node.error("[" + node.name + "][init Error Caught]" + er);
