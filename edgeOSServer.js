@@ -94,7 +94,7 @@ class EdgeOSServer extends EventEmitter {
 		this.sessionCookie = await this.logon(baseUrl, username, password);
 		try {
 			await this.refreshHostNames(true);
-		catch (er) {
+		} catch (er) {
 			console.log("Error refreshHostNames caught " + er);
 		}
 	}
