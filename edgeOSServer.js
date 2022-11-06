@@ -92,7 +92,11 @@ class EdgeOSServer extends EventEmitter {
 	}
 	async init() {
 		this.sessionCookie = await this.logon(baseUrl, username, password);
-		await this.refreshHostNames(true);
+		try {
+			await this.refreshHostNames(true);
+		catch (er) {
+			console.log("Error refreshHostNames caught " + er);
+		}
 	}
 	async createWS() {
 		const url = URL.parse(this.baseUrl);
@@ -179,7 +183,7 @@ class EdgeOSServer extends EventEmitter {
 			response = await axios.get(baseUrl.replace(/\/$/, '') + "/api/edge/data.json?data=dhcp_leases", {
 				headers: { "Cookie": `beaker.session.id=${this.sessionCookie}` }
 			});
-		} catch (er) {console.log("Caught error in logon " + er);throw new Error("refreshHostNames failed " + er)}
+		} catch (er) {console.log("Caught error in refreshHostNames " + er);throw new Error("refreshHostNames failed " + er)}
 		for (const pool in response.data.output['dhcp-server-leases']) {
 			const leases = response.data.output['dhcp-server-leases'][pool]; //DHC
 			for (const ip in leases) {
