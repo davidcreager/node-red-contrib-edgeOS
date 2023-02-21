@@ -33,27 +33,6 @@ async function handleMessage(messageContent) {
         }
     }
 }
-async function logon(baseUrl, username, password) {
-    const form = { username: username, password: password };
-	let response;
-	try {
-		response = await axios.post(baseUrl, qs.stringify(form), {
-			maxRedirects: 0,
-			validateStatus: () => true // accept all certs
-		});
-	} catch (er) {console.log("Caught error in logon " + er);throw new Error("Login failed " + er)}
-
-    if (!response.headers['set-cookie']){
-        throw new Error('Logon failed, please check username/password')
-    }
-    const cookies = response.headers['set-cookie'].reduce((obj, item) => {
-        const [name, value] = item.split(/=/);
-        obj[name] = value.split(/;/)[0];
-        return obj;
-    }, {});
-    const sessionCookie = cookies['beaker.session.id'];
-    return sessionCookie;
-}
 class EdgeOSServer extends EventEmitter {
 	//constructor(username,password, refreshPeriod, baseUrl) {
 		constructor(edgeServerProps) {
@@ -172,8 +151,7 @@ class EdgeOSServer extends EventEmitter {
 			obj[name] = value.split(/;/)[0];
 			return obj;
 		}, {});
-		const sess = cookies['beaker.session.id'];
-		return sess;
+		return cookies['beaker.session.id'];
 	}
 	async refreshHostNames(startup) {
 		let now = new Date(Date.now());
